@@ -26,12 +26,12 @@ class HashTable: public Dict<V> {
                         //Inserta el par key->value en el diccionario. Lanza una excepción std::runtime_error si key ya existe en el diccionario.
                         void insert(std::string key, V value){
                                 int pos = h(key);
-                                if((table[pos].search(key) == -1) && pos >= 0 && pos < max){
+                                if(table[pos].search(key) == -1){
                                         TableEntry<V> nodo(key, value);
                                         table[pos].prepend(nodo);
                                         n++;
                                 }else{
-                                        throw ("error de insercción");
+                                        throw std::runtime_error("error de insercción");
                                 }
                         }
 
@@ -68,9 +68,11 @@ class HashTable: public Dict<V> {
                         //Función hash que devuelve la posición (cubeta) en la tabla hash de key.  Se calculará como el resto de la divisón entre la suma de los valores ASCII numéricos de los caracteres de la clave y el tamaño de la tabla hash (ver nota más abajo).
                         int h(std::string key){
                                 int suma = 0;
+                                int caracteres = key.length();
                                 int i = 0;
-                                while(key.at(i)){
+                                while(caracteres > 0){
                                         suma += int(key.at(i));
+                                        caracteres --;
                                         i++;
                                 }
                                 return suma % max;
