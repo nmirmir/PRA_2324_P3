@@ -26,7 +26,7 @@ class HashTable: public Dict<V> {
                         //Inserta el par key->value en el diccionario. Lanza una excepción std::runtime_error si key ya existe en el diccionario.
                         void insert(std::string key, V value){
                                 int pos = h(key);
-                                if(table[pos].search(key) == -1){
+                                if((table[pos].search(key) == -1) && pos >= 0 && pos < max){
                                         TableEntry<V> nodo(key, value);
                                         table[pos].prepend(nodo);
                                         n++;
@@ -42,7 +42,7 @@ class HashTable: public Dict<V> {
                                 if(p == -1){
                                         throw std::runtime_error("la clave no se encuentra");
                                 }
-                                TableEntry<V> nodo = table[pos].get(p);
+                                TableEntry<V> nodo = table[pos].get(p);// Esto se hace porque como estás sacando un dato que está dentro d eun tipo TableEntry,, necesito guardalo en una variable de ese mismo tipo, para luego poder extraer sus atributos, y en este caso queremos el valor.
                                 return nodo.value;
                         }
 
@@ -80,8 +80,8 @@ class HashTable: public Dict<V> {
                         
                         HashTable(int size){
                                 int n = 0;
-                                int max = size;
-                                table = new ListLinked<TableEntry<V>>[size];
+                                max = size;
+                                table = new ListLinked<TableEntry<V>>[max];
                         }
 
                         //Método destructor. Se encargará de liberar la memoria dinámica reservada al crear la tabla table.
@@ -97,18 +97,20 @@ class HashTable: public Dict<V> {
                         //Sobrecarga global del operador << para imprimir el contenido de la tabla hash por pantalla. Recuerda incluir la cabecera <ostream> en el .h.
                         friend std::ostream& operator<<(std::ostream &out, const HashTable<V> &th){
 
-                                out << "HashTable [ entries: "<< th.n << "capacity: "<< th.max << "]"<<std::endl;
+                                out << "HashTable [ entries: "<< th.n << ", capacity: "<< th.max << "]"<< '\n' <<"======="<< std::endl;
 
                                 for(int i = 0; i < th.max ; i++){
-                                        out << "== Cubeta " << i << "==" << "List => [" <<std::endl;
+                                        out << "== Cubeta " << i << " =="<< '\n'<< '\n' << "List => [" <<std::endl;
                                         for(int j = 0; j < th.table[i].size(); j++){
 
                                                 out << th.table[i].get(j) <<std::endl; 
 
                                         }
 
-                                        out << "]";
+                                        out << "]"<< '\n' <<std::endl;
                                 }
+
+                                out << "=========="<<std::endl;
 
                                 return out;
 
