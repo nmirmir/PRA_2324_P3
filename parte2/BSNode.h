@@ -23,8 +23,8 @@ class BSNode {
                    //los punteros a los nodos sucesores left y  right proporcionados (nulos por defecto). 
                    BSNode(T elem, BSNode<T>* left=nullptr, BSNode<T>* right=nullptr){
                         this->elem = elem;
-                        this->elem.right = elem.right;
-                        this->elem.left = elem.left;
+                        this->right = right;
+                        this->left = left;
                    }
 
                    //Sobrecarga global del operador << para imprimir el nodo por pantalla. 

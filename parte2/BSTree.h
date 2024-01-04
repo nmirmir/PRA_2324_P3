@@ -36,7 +36,7 @@ class BSTree {
                     //Actúa como método lanzadera del método privado recursivo search(BSNode<T>* n, T e).  
                     //Notar que deberá devolver el elemento contenido por el nodo devuelto por el método privado.
                     T search(T e) const{
-                            BSNode<T> nodo_aux; 
+                            BSNode<T>* nodo_aux; 
                             nodo_aux = search(root,e); // r -> nodo raíz
                             return nodo_aux->elem;
                     }
@@ -56,6 +56,7 @@ class BSTree {
                                 return n; // se hace porque ya se ha encontrado el elemento
                         }
                     }
+                    // Pasar el valor hasta arriba, pq significa q hemos encontrado lo q queremos y queremos acabar la recursividad lo antes posible,como es const el ABB no se modifica por lo q no se modifica nada, solo nos interesa que el elemento llegue hasta el origen.
 
             public:
                     //Sobrecarga del operador[]. Actúa como interfaz al método search(T e).
@@ -65,7 +66,6 @@ class BSTree {
 
                     //Inserta el elemento e de tipo T de manera ordenada en el  ABB. Actúa como método lanzadera del método privado recursivo insert(BSNode<T>* n, T e).
                     void insert(T e){
-                        BSNode<T> root;
                         root = insert(root,e); // r-> nodo raíz
                     }
 
@@ -73,21 +73,23 @@ class BSTree {
                     //Método recursivo para la inserción ordenada de elementos. Inserta el elemento e de tipo T de manera ordenada en el (sub-)árbol cuya raíz es n. Devuelve el nodo que encabeza dicho (sub-)árbol modificado. Si el elemento e ya existe, lanza un std::runtime_error. Ver pseudocódigo abajo. 
                     BSNode<T>* insert(BSNode<T>* n, T e){
                         if(n == nullptr){
-                                return BSNode<T> nodo;
+                                nelem++;
+                                return new BSNode<T>(e);
                         }else if(n->elem == e){
                                 throw std::runtime_error("el elemento ya existe");
                         }else if(n->elem > e){
-                                return n->left = insert(n->left,e);               
+                                n->left = insert(n->left,e);               
                         }else{
-                                return n->right = insert(n->right,e);
+                                n->right = insert(n->right,e);
                         }
-                        return n;
+                        return n; // pq necesitamos devolver el nodo que ya existía para que no se pierda la identidad.
                     }
+                    // Cuando llegamos un nodo q no tiene nada, creamos uno nuevo, es decir, que guardamos una dirección de memoria en el heap q referencie a este, y le asignamos el valor e. Después, como es recursivo, iremos devolviendo el valor de cada llamada hasta llegar al principio.
 
            public:
                     //Sobrecarga del operador << para mostrar a través de out los contenidos del ABB bst, realizando un recorrido inorden o simétrico del árbol para mostrar los elementos ordenados de menor a mayor. Delega en el método privado recursivo print_inorder(). 
                    friend std::ostream& operator<<(std::ostream &out, const BSTree<T> &bst){
-                        out << print_inorder(&out, &bst) << std::endl;
+                        bst.print_inorder(out, bst.root);
                         return out;
                    }
 
@@ -96,24 +98,19 @@ class BSTree {
                    void print_inorder(std::ostream &out, BSNode<T>* n) const{
                         if(n != nullptr){
                                 if(n->left != nullptr ){
-                                        n->left = print_inorder(&out, n->left);
-                                        out << "nodo" << n->left << std::endl;
-                                }else if(n->right != nullptr ){
-                                        n->right = print_inorder(&out, n->right)
-                                        out << "nodo" << n->right; 
+                                        print_inorder(out, n->left); // llamada recursiva hasta que se imprima todo el árbol de la izquierda
                                 }
-                                out << n << std::endl;
-
-                                for(int i = 0; i < n->size(); i++){
-                                        print_inorder(&out, n);
+                                out << n->elem <<std::endl; // una vez impreso el árbol de la izquierda o de la derecha, imprimimos el elemento
+                                if(n->right != nullptr ){
+                                        print_inorder(out, n->right);// imprimimos el árbol de la derecha
                                 }
+                                
                         }
                    }
            public:
                    //Elimina el elemento e de tipo T del ABB. Actúa como método lanzadera del método privado recursivo remove(BSNode<T>* n, T e).
                    void remove(T e){
-                        BSNode<T> nodo;
-                        nodo.elem = remove(nodo, e);
+                       root = remove(root, e);
                    }
            private:
                    //Método recursivo para la eliminación de elementos. 
@@ -139,9 +136,9 @@ class BSTree {
                                 }else{
                                 // Este caso es para ver si tiene 1 o 0 descendientes
                                         if(n->left == nullptr){
-                                                n = (n->left,e);
-                                        }else if(n->left == nullptr){
-                                                n = (n->right,e);
+                                                n = n->right;
+                                        }else if(n->right == nullptr){
+                                                n = n->left;
                                         }
                                 }
 
@@ -174,16 +171,16 @@ class BSTree {
            public:
                    //Método destructor. Delega en el método privado recursivo delete_cascade().
                    ~BSTree(){
-                        BSNode<T> nodo;   
-                        delete_cascade(nodo);
+                        delete_cascade(root);
                    }
 
            private:
                    //Método recursivo para la liberación de la memoria dinámica ocupada por los objetos de tipo BSNode<T> que conforman el (sub)-árbol cuya raíz es n.
                    void delete_cascade(BSNode<T>* n){
-                        if(n != nullptr){
-                                remove(n,e);
-                        }
+                               if(n->left != nullptr){
+                                      delete_cascade(n->left); 
+                               } 
+                               if()
                    }
 
 
