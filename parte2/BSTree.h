@@ -178,9 +178,12 @@ class BSTree {
                    //Método recursivo para la liberación de la memoria dinámica ocupada por los objetos de tipo BSNode<T> que conforman el (sub)-árbol cuya raíz es n.
                    void delete_cascade(BSNode<T>* n){
                                if(n->left != nullptr){
-                                      delete_cascade(n->left); 
+                                      delete_cascade(n->left);
                                } 
-                               if()
+                               if(n->right != nullptr){
+                                      delete_cascade(n->right);   
+                               }
+                               delete(n);
                    }
 
 
